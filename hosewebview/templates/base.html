@@ -1,0 +1,26 @@
+{# -*- engine:django -*- #}
+<!doctype html>
+<html land="en-GB">
+    <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<link rel="icon" href="data:,">
+	<title>{% block title %}{% endblock %} - Overview</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+	<nav>
+	    <a href=".">Home</a>
+	    <a href="/history">History</a>
+	</nav>
+	<section class="content">
+	    <header>
+		{% block header %}{% endblock %}
+	    </header>
+	    {% for message in get_flashed_messages() %}
+	    <div class="flash">{{ message }}</div>
+	    {% endfor %}
+	    {% block content %}{% endblock %}
+	</section>
+    </body>
+</html>

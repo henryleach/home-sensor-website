@@ -1,0 +1,23 @@
+{# -*- engine:django -*- #}
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}Overview{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+    <div class="summary-container">
+{% for summary in summaries %}
+    <a href="{{ url_for('history', location=([summary['location']] + add_locs)) }}">
+    <div class="loc-summary">
+	<h2 class="location-name">{{ summary["location"] }}</h2>
+	<span class="ov-temp">{{ summary["temp_c"] }} °C</span>
+	<span class="ov-humidity">{{ summary["humidity_pct"] }} %</span><br>
+	<span class="little-timestamp">{{ summary["localtime"] }}</span>
+    </div></a>
+{% endfor %}
+    </div>
+
+{% endblock %}
+

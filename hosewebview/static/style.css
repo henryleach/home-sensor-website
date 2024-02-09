@@ -1,0 +1,39 @@
+html {font-family: sans-serif;}
+
+h1 {margin: 5px;}
+
+h2.location-name {text-align: center;
+		 }
+
+span.ov-temp {font-size: 150%;
+	      font-weight: bold;}
+
+div.loc-summary {border: 1px black solid;
+	      background-color: ghostwhite;
+	      text-align: center;
+	      width: 15em;
+	      padding: 1em;
+	      border-radius: 6px;}
+
+div.summary-container {display: flex;
+	       flex-wrap: wrap;
+	       gap: 1em;}
+
+form {margin: 0px;}
+
+.button {padding: 8px;
+	 font-size: 120%;
+	 font-weight: bold;}
+
+div.summary-container a:link, a:visited {text-decoration: none;
+					 color: black;}
+
+span.little-timestamp {color: darkgrey;}
+
+body {margin: 0px;}
+
+nav {background-color: skyblue;
+     width: 100%;
+     padding: 5px;
+     border: 0px;}
+

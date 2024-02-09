@@ -1,0 +1,25 @@
+#+TITLE: HOme SEnsor Webview
+
+A simple Python [[https://flask.palletsprojects.com/en/3.0.x/][Flask]] based website that uses [[https://plotly.com/][Plotly]] to visualise the data from various sensors in the home network.
+
+* Installation
+
+Clone this directory into your preferred location.
+
+Create a Python virtual Environment, and use the requirements.txt file to install the dependencies. These include [[https://gunicorn.org/][Gunicorn]] as a WSGI server, assuming you're not going to run this on the Flask test server (which you shouldn't), but it's not strictly necessary to just run the application.
+
+* Configuration
+
+On start the application will look for a ~config.py~ file in top directory to set the location of the Sqlite database to use. If no such file is found, it will fall back on the test defaults and look for a database at ~tests/example-db.sqlite3~.
+
+To test the application you can run the script ~create-example-db.py~ in the tests directory with:
+: python create-example-db.py
+
+and it will generate a database filled with sample data that should display if you run the application.
+
+* Licenses
+
+The copies of the Plotly JavaScript files are licensed, as per their [[https://github.com/plotly/plotly.py][GitHub Repo]] under the MIT License. Everything else is covered by LICENSE.TXT
+
+
+

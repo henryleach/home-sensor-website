@@ -1,0 +1,54 @@
+{# -*- engine:django -*- #}
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}History{% endblock %}</h1>
+{% endblock %}
+
+
+{% block content %}
+    <script src="{{ url_for('static',
+		 filename='plotly-2.25.2.min.js') }}"
+     charset="utf-8"></script>
+    {{ chart|safe }}
+
+    <div id="chart-options">
+	<h2>Chart Options</h2>
+	<form method="get">
+	<p><label for="start_time">From:</label>
+	    <input type="datetime-local"
+		   id="start_time"
+		   name="start_time"
+		   min="2022-06-01T00:00"
+		   value="{{start_time}}"/>
+	</p>
+	<p><label for="end_time">To:</label>
+	    <input type="datetime-local"
+		   id="end_time"
+		   name="end_time"
+		   min="2022-06-01T00:00"
+		   value="{{end_time}}"/>
+	</p>
+	<p><fieldset>
+	    <legend>Location</legend>
+	    {% for location, checked in location_dict.items() %}
+		<div>
+		<input type="checkbox" id="{{ location }}" name="location" value="{{ location }}" {{ checked }}/>
+		<label for="{{ location }}">{{ location }}</label>
+		</div>
+	    {% endfor %}
+	</fieldset>
+	</p>
+	<p>
+	    <fieldset>
+		<legend>View Type</legend>
+		{% for view in view_type %}
+		    <input type="radio" id="{{ view[0] }}" name="mobile" value="{{ view[1] }}" {{ view[2] }}/>
+		    <label for="{{ view[0] }}">{{ view[0].capitalize() }}</label>
+		{% endfor %}
+	    </fieldset>
+	    <br>
+	<input type="submit" id="submit-button" class="button" value="Update Chart"/>
+	</form>
+    </div>
+{% endblock %}
