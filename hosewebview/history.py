@@ -90,16 +90,15 @@ def history():
                        AND s.from_timestamp_utc < t.timestamp_utc
                        AND COALESCE(s.to_timestamp_utc, datetime('now')) >= t.timestamp_utc
                        WHERE location IN ({loc_placeholders})
-                       AND t.timestamp_utc BETWEEN unixepoch(?) AND unixepoch(?)
+                       AND t.timestamp_utc BETWEEN ? AND ?
                        AND t.temp_c > -30 """
-                       # ORDER BY t.timestamp_utc DESC """
 
     # Need the -30 cutoff as there appear to be the occasional misreadings
     # down to super low temperatures. Is the ORDER BY needed?
     # seems to work without, or is that only because the data is naturally
     # ordered that way, when partitioned by location? Saves a lot of query effort.
 
-    query_params = (*locations, start_time, end_time)
+    query_params = (*locations, start_time.timestamp(), end_time.timestamp())
     
     df = pandas.read_sql_query(query_string,
                                get_db(),
