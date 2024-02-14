@@ -1,4 +1,5 @@
 DEFAULT_STATIONS=["OutsideStation"]
-DATABASE="test/example-db.sqlite3"  # not relative to instance, but to project root
+# Relative to project root, not instance directory:
+DATABASE="test/example-db.sqlite3"  
 
 
