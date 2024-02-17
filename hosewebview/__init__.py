@@ -1,6 +1,7 @@
 import os
 import configparser
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 def create_app(test_config=None):
     # create and configure the app in an
@@ -10,7 +11,8 @@ def create_app(test_config=None):
     # Default values while testing
     app.config.from_mapping(
         DATABASE=("tests/example-db.sqlite3"),
-        DEFAULT_STATIONS=["OutsideStation"]
+        DEFAULT_STATIONS=["OutsideStation"],
+        PROXY_LEVELS=0
     )
 
     if test_config is None:
@@ -21,12 +23,22 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
 
 
-    print(app.config["DATABASE"])
+    # print(app.config["DATABASE"])
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
 
+    pls = app.config["PROXY_LEVELS"]
+    
+    if pls > 0:
+        # Set the right proxy level when behind something like nginx
+        app.wsgi_app = ProxyFix(app.wsgi_app,
+                                x_for=pls,
+                                x_proto=pls,
+                                x_host=pls,
+                                x_prefix=pls)
+    
     from . import db
     db.init_app(app)
 

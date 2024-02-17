@@ -91,7 +91,6 @@ def index():
 
     # Set in global preferences to add automatically
     # to any initial history plot.
-    # additional_history_locs = ["Hamburg Fuhlsbüttel"]
     additional_history_locs = current_app.config["DEFAULT_STATIONS"]
 
     return render_template("overview.html",
