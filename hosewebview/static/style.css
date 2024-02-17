@@ -12,6 +12,8 @@ html {font-family: sans-serif;
       color: var(--main-text);
       background-color: var(--med-bg-color);}
 
+* {box-sizing: border-box;}
+
 h1 {margin: 5px;}
 
 .location-name {
