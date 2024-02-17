@@ -14,8 +14,11 @@
 
     <div id="chart-options">
 	<h2>Chart Options</h2>
-	<form method="get">
-	<p><label for="start_time">From:</label>
+	<div class="input-container">
+	<form class="temp-hist" method="get">
+	    <fieldset>
+		<legend>Dates</legend>
+	    <p><label for="start_time">From:&nbsp;</label>
 	    <input type="datetime-local"
 		   id="start_time"
 		   name="start_time"
@@ -29,7 +32,8 @@
 		   min="2022-06-01T00:00"
 		   value="{{end_time}}"/>
 	</p>
-	<p><fieldset>
+	    </fieldset>
+	<fieldset>
 	    <legend>Location</legend>
 	    {% for location, checked in location_dict.items() %}
 		<div>
@@ -38,15 +42,13 @@
 		</div>
 	    {% endfor %}
 	</fieldset>
-	</p>
-	<p>
 	    <fieldset>
 		<legend>View Type</legend>
 		{% for view in view_type %}
-		    <input type="radio" id="{{ view[0] }}" name="mobile" value="{{ view[1] }}" {{ view[2] }}/>
-		    <label for="{{ view[0] }}">{{ view[0].capitalize() }}</label>
+		  <p><input type="radio" id="{{ view[0] }}" name="mobile" value="{{ view[1] }}" {{ view[2] }}/>
+		      <label for="{{ view[0] }}">{{ view[0].capitalize() }}</label></p>
 		{% endfor %}
-	    </fieldset>
+	    </fieldset></div>
 	    <br>
 	<input type="submit" id="submit-button" class="button" value="Update Chart"/>
 	</form>

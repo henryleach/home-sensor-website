@@ -11,10 +11,10 @@
 {% for summary in summaries %}
     <a class="overview-link" href="{{ url_for('history', location=([summary['location']] + add_locs)) }}">
     <div class="loc-summary">
-	<h2 class="location-name">{{ summary["location"] }}</h2>
-	<span class="ov-temp">{{ summary["temp_c"] }} °C</span>
-	<span class="ov-humidity">{{ summary["humidity_pct"] }} %</span>
-	<span class="little-timestamp">{{ summary["localtime"] }}</span>
+	<div><h2 class="location-name">{{ summary["location"] }}</h2>
+	    <p class="ov-temp">{{ summary["temp_c"] }}&nbsp;°C</p></div>
+	<div><p class="ov-humidity">{{ summary["humidity_pct"] }}&nbsp;%</p>
+	    <p class="little-timestamp">{{ summary["localtime"] }}</p></div>
     </div></a>
 {% endfor %}
     </div>

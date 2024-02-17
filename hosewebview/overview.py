@@ -85,7 +85,7 @@ def index():
         new_row = {key: value for key, value in zip(row.keys(), row)}
         
         new_row["localtime"] = render_local_time(row["timestamp_utc"],
-                                                 "%H:%m:%S %p",
+                                                 "%H:%m %p",
                                                  "Europe/Berlin")
         formatted_results.append(new_row)
 

@@ -14,25 +14,48 @@ html {font-family: sans-serif;
 
 h1 {margin: 5px;}
 
-h2.location-name {text-align: center;
-		  display: inline;
-		  padding: 3em;}
+.location-name {
+    //text-align: left;
+    //display: inline;
+}
 
-span.ov-temp {font-size: 120%;
+.ov-temp {font-size: 120%;
 	      font-weight: bold;}
 
-div.loc-summary {border: 1px black solid;
+.overview-link {
+		 width: 20rem;
+		 max-width: 90%;
+}
+
+.loc-summary {
 		 background-color: var(--dark-bg-color);
 		 color: var(--light-text);
-		 text-align: center;
-		 width: 15em;
 		 padding: 1em;
-		 border-radius: 6px;}
+		 border-radius: 6px;
+		 display: flex;
+		 align-items: center;
+		 gap: 1rem;
+}
 
 div.summary-container {display: flex;
 		       flex-wrap: wrap;
 		       gap: 1em;		      
-		      }
+		       justify-content: center;}
+
+.loc-summary div:first-child {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.loc-summary :is(p, h2) {margin: 0}
+
+.loc-summary div:first-child > * {font-size: 1.2em;}
+
+.input-container {display: flex;
+		  flex-direction: row;}
 
 form {margin: 0px;}
 
@@ -43,12 +66,27 @@ form {margin: 0px;}
 div.summary-container a:link, a:visited {text-decoration: none;
 					 color:  var(--main-text);}
 
-span.little-timestamp {color: darkgrey;}
+.little-timestamp {color: var(--alt1-color);}
 
 body {margin: 0px;}
 
 nav {background-color: var(--light-high-light-color);
      width: 100%;
      padding: 5px;
-     border: 0px;}
+     border: 0px;
+     font-weight: bold;}
+
+form.temp-hist {
+    display: flex;}
+
+fieldset:first-child > p {display: flex;
+			  justify-content: space-between;}
+
+#submit-button {margin: 0.5em 3em 3em;}
+
+@media (max-width:520px) {
+    form.temp-hist {
+	flex-direction: column;
+    }
+}
 
