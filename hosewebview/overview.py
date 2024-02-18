@@ -27,7 +27,7 @@ def render_local_time(tstamp, dtformat=None, timezone=None):
         tzstump = " UTC"
 
     if not dtformat:
-        dtformat = "%Y-%N-%D %H:%m:%s"
+        dtformat = "%Y-%m-%d %H:%M:%S"
 
     time_rendered = dt.strftime(dtformat)
     if tzstump:
@@ -85,7 +85,7 @@ def index():
         new_row = {key: value for key, value in zip(row.keys(), row)}
         
         new_row["localtime"] = render_local_time(row["timestamp_utc"],
-                                                 "%H:%m %p",
+                                                 "%H:%M %p",
                                                  "Europe/Berlin")
         formatted_results.append(new_row)
 

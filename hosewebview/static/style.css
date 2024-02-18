@@ -22,7 +22,7 @@ h1 {margin: 5px;}
 }
 
 .ov-temp {font-size: 120%;
-	      font-weight: bold;}
+	  font-weight: bold;}
 
 .overview-link {
 		 width: 20rem;
@@ -30,13 +30,15 @@ h1 {margin: 5px;}
 }
 
 .loc-summary {
-		 background-color: var(--dark-bg-color);
-		 color: var(--light-text);
-		 padding: 1em;
-		 border-radius: 6px;
-		 display: flex;
-		 align-items: center;
-		 gap: 1rem;
+	       background-color: var(--dark-bg-color);
+	       color: var(--light-text);
+	       padding: 1em;
+	       border-radius: 6px;
+	       display: flex;
+	       align-items: center;
+	       gap: 1rem;
+               border-radius: 4px;
+
 }
 
 div.summary-container {display: flex;
@@ -80,6 +82,12 @@ nav {background-color: var(--light-high-light-color);
 
 form.temp-hist {
     display: flex;}
+
+fieldset {
+    border-radius: 4px;
+    border: var(--main-text) 1px;
+    border-style: solid;
+}
 
 fieldset:first-child > p {display: flex;
 			  justify-content: space-between;}
