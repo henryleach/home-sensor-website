@@ -81,7 +81,7 @@ def generate_temp_samples(cur,
 
     data = []
     
-    for count, timestamp in enumerate(timestamps):
+    for count, timestamp in enumerate(timestamp_list):
         temp = middle_temp + (temp_swing * sin(pi * count * 0.3))
         data.append((timestamp, stationname, round(temp, 2)))
 
@@ -101,7 +101,7 @@ def generate_weather_temps(cur,
 
     data = []
 
-    for count, timestamp in enumerate(timestamps):
+    for count, timestamp in enumerate(timestamp_list):
         temp = temp = middle_temp + (temp_swing * sin(pi * count * 0.3))
         data.append((stationname, round(temp, 2), 1000, 50, timestamp))
 
@@ -132,12 +132,16 @@ if __name__ == "__main__":
     endtime = endtime.replace(second=0, microsecond=0)
     starttime = endtime - timedelta(days=sample_length)
 
-    timestamps = generate_timestamps(starttime, 4, (6*sample_length))
+    a_timestamps = generate_timestamps(starttime, 4, (6*sample_length))
+    b_timestamps = generate_timestamps((starttime - timedelta(hours=4)),
+                                       4,
+                                       (6*sample_length))
 
-    generate_temp_samples(cur, "StationA", timestamps, 20, 10)
-    generate_temp_samples(cur, "StationB", timestamps, 20, 5)
+    generate_temp_samples(cur, "StationA", a_timestamps, 20, 10)
+    generate_temp_samples(cur, "StationB", b_timestamps, 20, 5)
 
-    generate_weather_temps(cur, "OutsideStation", timestamps, 10, 10)
+    # cut the timestamps short to simulate the delay in getting weather data.
+    generate_weather_temps(cur, "OutsideStation", a_timestamps[0:-5], 10, 10)
     
     statc_endtime = (starttime + timedelta(days=sample_length/2)).timestamp()
     
@@ -151,13 +155,15 @@ if __name__ == "__main__":
 
     # make the last update 5 minutes old.
     last_update = (endtime - timedelta(minutes=5)).timestamp()
+    # Make the last archive time even older.
+    last_archive = (endtime - timedelta(minutes=30)).timestamp()
     
     last_updates = (
-        ("StationA", last_update, "temp_c", 20, last_update, 20),
-        ("StationB", last_update, "temp_c", 25, last_update, 25),
+        ("StationA", last_update, "temp_c", 20, last_archive, 20),
+        ("StationB", last_update, "temp_c", 25, last_archive, 25),
         ("StationC", statc_endtime, "temp_c", 20, statc_endtime, 20),
-        ("StationA", last_update, "humidity_pct", 50, last_update, 50),
-        ("StationB", last_update, "humidity_pct", 50, last_update, 50),
+        ("StationA", last_update, "humidity_pct", 50, last_archive, 50),
+        ("StationB", last_update, "humidity_pct", 50, last_archive, 50),
         ("StationC", statc_endtime, "humidity_pct", 50, statc_endtime, 50))
 
     cur.executemany("INSERT INTO lastUpdates VALUES (?, ?, ?, ?, ?, ?)", last_updates)

@@ -11,7 +11,7 @@ def create_app(test_config=None):
     # Default values while testing
     app.config.from_mapping(
         DATABASE=("tests/example-db.sqlite3"),
-        DEFAULT_STATIONS=["OutsideStation"],
+        DEFAULT_STATIONS=["Outside"],
         PROXY_LEVELS=0
     )
 
@@ -23,7 +23,7 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
 
 
-    # print(app.config["DATABASE"])
+    print(app.config["DATABASE"])
     try:
         os.makedirs(app.instance_path)
     except OSError:
@@ -50,3 +50,4 @@ def create_app(test_config=None):
     app.add_url_rule("/history", endpoint="history")
     
     return app
+

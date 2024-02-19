@@ -11,9 +11,8 @@ def get_db():
     object, or return an existing one"""
 
     if 'db' not in g:
-
         db_path = current_app.config["DATABASE"]
-        print(f"db_path = {db_path}")
+        # print(f"db_path = {db_path}")
         g.db = sqlite3.connect(db_path)
         g.db.row_factory = sqlite3.Row
 
@@ -28,18 +27,19 @@ def close_db(e=None):
 def init_db():
     db = get_db()
 
-    # TODO: Is this needed?
-    with current_app.open_resource('view_schemas.sql') as f:
+    # Create the indexes at start for quicker queries
+    with current_app.open_resource('create-indexes.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
-@click.command('init-db')
-def init_db_command():
-    """Clear the existing data and create new tables.
-    TODO: REMOVE"""
-
+@click.command('create-indexes')
+def create_indexes_command():
+    """ Create additional indexes on the timestamp
+    columns that are queried heavily. Should improve
+    query speed.
+    """
     init_db()
-    click.echo('Added views to DB.')
+    click.echo('Added indexes')
 
 def init_app(app):
     app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
+    app.cli.add_command(create_indexes_command)

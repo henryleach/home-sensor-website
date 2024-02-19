@@ -75,30 +75,51 @@ def history():
         end_time = temp_time
        
     loc_placeholders = ", ".join(["?" for _ in locations])
-    
-    query_string = f"""SELECT t.timestamp_utc,
-                              t.temp_c,
-                              s.location
-                       FROM
-                       (SELECT timestamp_utc, station_id, temp_c
-                       FROM temperature
-                       UNION ALL
-                       SELECT timestamp_utc, station_id, temp_c
-                       FROM meteoTemps) AS t
-                       INNER JOIN stations s
-                       ON t.station_id = s.station_id
-                       AND s.from_timestamp_utc < t.timestamp_utc
-                       AND COALESCE(s.to_timestamp_utc, datetime('now')) >= t.timestamp_utc
-                       WHERE location IN ({loc_placeholders})
-                       AND t.timestamp_utc BETWEEN ? AND ?
-                       AND t.temp_c > -30 """
 
     # Need the -30 cutoff as there appear to be the occasional misreadings
-    # down to super low temperatures. Is the ORDER BY needed?
-    # seems to work without, or is that only because the data is naturally
-    # ordered that way, when partitioned by location? Saves a lot of query effort.
+    # down to super low temperatures.
+    # No ORDER BY as all records are added chronologically and that saves
+    # effort, but might not always be true.    
 
-    query_params = (*locations, start_time.timestamp(), end_time.timestamp())
+    query_string = f"""
+    SELECT t.timestamp_utc,
+           t.temp_c,
+           s.location
+    FROM
+    (SELECT timestamp_utc, station_id, temp_c
+    FROM temperature
+    WHERE timestamp_utc BETWEEN ? AND ?
+    AND temp_c > -30
+    UNION ALL
+    SELECT timestamp_utc, station_id, temp_c
+    FROM meteoTemps
+    WHERE timestamp_utc BETWEEN ? AND ?
+    UNION ALL
+    SELECT timestamp_utc,
+           station_id,
+           measure_value as temp_c
+    FROM lastUpdates       
+    WHERE measure_type IS 'temp_c') AS t
+    INNER JOIN
+    (SELECT station_id,
+            location,
+            to_timestamp_utc,
+            from_timestamp_utc
+    FROM stations
+    WHERE location IN ({loc_placeholders})
+    ) AS s
+    ON t.station_id = s.station_id
+    WHERE s.from_timestamp_utc < t.timestamp_utc
+    AND COALESCE(s.to_timestamp_utc, datetime('now')) >= t.timestamp_utc
+    """
+    start_ts = start_time.timestamp()
+    end_ts = end_time.timestamp()
+    
+    query_params = (start_ts,
+                    end_ts,
+                    start_ts,
+                    end_ts,
+                    *locations)
     
     df = pandas.read_sql_query(query_string,
                                get_db(),
