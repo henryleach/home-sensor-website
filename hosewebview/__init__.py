@@ -29,7 +29,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    pls = app.config["PROXY_LEVELS"]
+    pls = int(app.config["PROXY_LEVELS"])
     
     if pls > 0:
         # Set the right proxy level when behind something like nginx
