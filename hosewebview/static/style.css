@@ -1,7 +1,7 @@
 :root {
     --dark-bg-color: #39393A;
     --med-bg-color: #D7D9CE;
-    --light-high-light-color: #F991CC;
+    --light-high-light-color: mediumvioletred;
     --alt1-color: #CCC9A1;
     --alt2-color: #508991;
     --main-text: #39393A;
@@ -15,6 +15,9 @@ html {font-family: sans-serif;
 * {box-sizing: border-box;}
 
 h1 {margin: 5px;}
+
+a, a:visited { color: var(--light-text);}
+
 
 .location-name {
     //text-align: left;
@@ -33,7 +36,6 @@ h1 {margin: 5px;}
 	       background-color: var(--dark-bg-color);
 	       color: var(--light-text);
 	       padding: 1em;
-	       border-radius: 6px;
 	       display: flex;
 	       align-items: center;
 	       gap: 1rem;
@@ -65,10 +67,13 @@ form {margin: 0px;}
 
 .button {padding: 8px;
 	 font-size: 120%;
-	 font-weight: bold;}
+	 font-weight: bold;
+	 color: var(--light-text);
+	 background-color: var(--light-high-light-color);}
 
-div.summary-container a:link, a:visited {text-decoration: none;
-					 color:  var(--main-text);}
+div.summary-container
+:is(a:link, a:visited) {text-decoration: none;
+			color:  var(--main-text);}
 
 .little-timestamp {color: var(--alt1-color);}
 
@@ -78,16 +83,19 @@ nav {background-color: var(--light-high-light-color);
      width: 100%;
      padding: 5px;
      border: 0px;
-     font-weight: bold;}
+     font-weight: bold;
+     font-size: 1.5rem;}
 
 form.temp-hist {
     display: flex;}
 
-fieldset {
+fieldset, .button {
     border-radius: 4px;
     border: var(--main-text) 1px;
     border-style: solid;
 }
+
+input[type="datetime-local"] {font: inherit;}
 
 fieldset:first-child > p {display: flex;
 			  justify-content: space-between;}
