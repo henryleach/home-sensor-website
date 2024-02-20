@@ -76,7 +76,7 @@ def history():
        
     loc_placeholders = ", ".join(["?" for _ in locations])
 
-    # Need the -30 cutoff as there appear to be the occasional misreadings
+    # Need the -30 & -100 cutoffs as there sometimes weird anomalies
     # down to super low temperatures.
     # No ORDER BY as all records are added chronologically and that saves
     # effort, but might not always be true.    
@@ -94,12 +94,14 @@ def history():
     SELECT timestamp_utc, station_id, temp_c
     FROM meteoTemps
     WHERE timestamp_utc BETWEEN ? AND ?
+    AND temp_c > -100
     UNION ALL
     SELECT timestamp_utc,
            station_id,
            measure_value as temp_c
     FROM lastUpdates       
-    WHERE measure_type IS 'temp_c') AS t
+    WHERE measure_type IS 'temp_c'
+    AND timestamp_utc BETWEEN ? AND ?) AS t
     INNER JOIN
     (SELECT station_id,
             location,
@@ -116,6 +118,8 @@ def history():
     end_ts = end_time.timestamp()
     
     query_params = (start_ts,
+                    end_ts,
+                    start_ts,
                     end_ts,
                     start_ts,
                     end_ts,

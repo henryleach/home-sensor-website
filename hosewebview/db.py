@@ -27,19 +27,19 @@ def close_db(e=None):
 def init_db():
     db = get_db()
 
-    # Create the indexes at start for quicker queries
-    with current_app.open_resource('create-indexes.sql') as f:
+    # Create the indices at start for quicker queries
+    with current_app.open_resource('create-indices.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
-@click.command('create-indexes')
-def create_indexes_command():
-    """ Create additional indexes on the timestamp
+@click.command('create-indices')
+def create_indices_command():
+    """ Create additional indices on the timestamp
     columns that are queried heavily. Should improve
     query speed.
     """
     init_db()
-    click.echo('Added indexes')
+    click.echo('Added indices')
 
 def init_app(app):
     app.teardown_appcontext(close_db)
-    app.cli.add_command(create_indexes_command)
+    app.cli.add_command(create_indices_command)
