@@ -12,7 +12,8 @@ def create_app(test_config=None):
     app.config.from_mapping(
         DATABASE=("tests/example-db.sqlite3"),
         DEFAULT_STATIONS=["Outside"],
-        PROXY_LEVELS=0
+        PROXY_LEVELS=0,
+        TIME_ZONE="Europe/Berlin"
     )
 
     if test_config is None:

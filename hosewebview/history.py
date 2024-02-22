@@ -1,10 +1,12 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
-)
+    Blueprint, flash, g,
+    redirect, render_template,
+    request, url_for, current_app)
+
 from werkzeug.exceptions import abort
 
 from hosewebview.db import get_db
-
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import pandas
 import plotly.express as px
 import hosewebview.plotlythemes  # imports light_temp currently
@@ -18,15 +20,33 @@ def history():
     for various locations.
     """
 
+    # Assume that if no TZ is given, the
+    # app's default is meant. All displayed times are
+    # in the set timezone, and then converted going to and
+    # from the DB.
+    default_tz = current_app.config["TIME_ZONE"]
+    
     # getlist returns an empty array if no values
     location = request.args.getlist('location', type=str)
     mobile = request.args.get("mobile", default="true", type=str)
     # These should be iso formatted strings.
     in_start_time = request.args.get("start_time", default=None, type=str)
     in_end_time = request.args.get("end_time", default=None, type=str)
-
-    # Check in times for type and value errors, and set defaults.
+    tz = request.args.get("timezone", default=default_tz, type=str)
     
+    # Check in times for type and value errors, and set defaults.
+
+    try:
+        tzone = ZoneInfo(tz)
+    except (NameError, ZoneInfoNotFoundError):
+        # Assumes the default is valid, otherwise
+        # need another test and fallback to UTC?
+        # should have already thrown an error in __init.py__
+        # if it was wrong.
+        tz = default_tz
+        tzone = ZoneInfo(default_tz)
+        
+        
     db = get_db()
     # Need list of currently active locations
     # for various purposes:
@@ -56,17 +76,21 @@ def history():
     # This doesn't contain any timezone info.
     
     try:
-        start_time = datetime.fromisoformat(in_start_time)
+        start_time = (datetime
+                      .fromisoformat(in_start_time)
+                      .replace(tzinfo=tzone))
     except (ValueError, TypeError):
         # Set a default, midnight the day before
-        start_time = ((datetime.now(timezone.utc) - timedelta(days=1))
+        start_time = ((datetime.now(tzone) - timedelta(days=1))
                       .replace(hour=0, minute=0, second=0, microsecond=0))
 
     try:
-        end_time = datetime.fromisoformat(in_end_time)
+        end_time = (datetime
+                    .fromisoformat(in_end_time)
+                    .replace(tzinfo=tzone))
     except (ValueError, TypeError):
         # Set a default, now.
-        end_time = datetime.now(timezone.utc)
+        end_time = datetime.now(tzone)
 
     if end_time < start_time:
         # In case they're incorrectly entered.
@@ -114,8 +138,8 @@ def history():
     WHERE s.from_timestamp_utc < t.timestamp_utc
     AND COALESCE(s.to_timestamp_utc, datetime('now')) >= t.timestamp_utc
     """
-    start_ts = start_time.timestamp()
-    end_ts = end_time.timestamp()
+    start_ts = start_time.astimezone(timezone.utc).timestamp()
+    end_ts = end_time.astimezone(timezone.utc).timestamp()
     
     query_params = (start_ts,
                     end_ts,
@@ -133,12 +157,14 @@ def history():
     # Add timezone info, and then convert to local time.
     df["timestamp_utc"] = (df["timestamp_utc"]
                            .dt.tz_localize("utc")
-                           .dt.tz_convert("Europe/Berlin"))
+                           .dt.tz_convert(tz))
+    # Remove the UTC as that's no longer true
+    df.rename(columns={"timestamp_utc": "timestamp"}, inplace=True)
 
     
     
     fig = px.line(df,
-                  x="timestamp_utc",
+                  x="timestamp",
                   y="temp_c",                  
                   color="location",
                   template=plot_template,
@@ -150,7 +176,7 @@ def history():
     else:
         fig.update_layout(yaxis_title="Temperature °C")
 
-    fig.update_layout(xaxis_title="Timestamp (UTC)")
+    fig.update_layout(xaxis_title="Timestamp")
 
     rendered_chart = fig.to_html(include_plotlyjs=False,
                                   full_html=False,
@@ -175,4 +201,5 @@ def history():
                            start_time=start_time.strftime(datetime_local_value_format),
                            end_time=end_time.strftime(datetime_local_value_format),
                            location_dict=location_dict,
-                           view_type=view_type)
+                           view_type=view_type,
+                           timezone=tz)

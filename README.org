@@ -2,20 +2,84 @@
 
 A simple Python [[https://flask.palletsprojects.com/en/3.0.x/][Flask]] based website that uses [[https://plotly.com/][Plotly]] to visualise the data from various sensors in the home network.
 
+This works together with the [[https://github.com/henryleach/store-mqtt-data][store-mqtt-data]] and [[https://github.com/henryleach/get-dwd-weather-data][get-dwd-weather]] applications, and relies on a database filled with the same tables names and schemas they use.
+
 * Installation
+
+Install the dependencies as per your distribution (check you package manager for the correct names):
+
+- Python (Tested with 3.11)
+- sqlite3
+- SGI webserver (only tested with nginx)
 
 Clone this directory into your preferred location.
 
-Create a Python virtual Environment, and use the requirements.txt file to install the dependencies. These include [[https://gunicorn.org/][Gunicorn]] as a WSGI server, assuming you're not going to run this on the Flask test server (which you shouldn't), but it's not strictly necessary to just run the application.
+Create a Python virtual Environment, and use the ~requirements.txt~ file to install the dependencies:
+
+: pip install -r requirements.txt
+
+These include [[https://gunicorn.org/][Gunicorn]] as a WSGI server, assuming you're not going to run this on the Flask test server (which you shouldn't), but it's not strictly necessary to just run the application.
+
+There is also the role 'setup-hose-webview' as part of the [[https://github.com/henryleach/home-sensor-network][collection of Ansible playbooks]] written to install this, and related applications, on a machine.
 
 * Configuration
 
-On start the application will look for a ~config.py~ file in top directory to set the location of the Sqlite database to use. If no such file is found, it will fall back on the test defaults and look for a database at ~tests/example-db.sqlite3~.
+On start the application will look for a ~config.py~ file in top directory to set the location of the Sqlite database to use.
+
+If no such file is found, it will fall back on the test defaults and look for a database at ~tests/example-db.sqlite3~, see 'Testing' below on how to generate this file if you need it.
+
+The following options can be specified, any not specified will use the default values defined in ~__init__.py~.
+
+#+Caption: Example config.py file
+#+begin_src python
+DEFAULT_STATIONS=["Outside"]
+# Relative to project root, not instance directory:
+DATABASE="test/example-db.sqlite3"  
+PROXY_LEVELS=1
+TIME_ZONE="Europe/Amsterdam"
+#+end_src
+
+*DEFAULT_STATIONS: list<string>*
+List of station location names that will always be included by default in all plots on the History page. Useful for having something like outside temperatures always included when clicking from one of the location summary tiles on the Overview page.
+
+*DATABASE: string*
+Path relative to the top directory to the Sqlite3 data base to query the data from.
+
+*PROXY_LEVELS: integer*
+Number of proxies the application sits behind, used with Flask's [[https://flask.palletsprojects.com/en/2.3.x/deploying/proxy_fix/][ProxyFix]]. If this is sat behind one webserver, like nginx, then it should be set to 1.
+
+*TIME_ZONE: string*
+Time zone that the data is located in. All the data in the DB, and in the queries, is stored in UTC, but translated to a local time, based on this time zone, before displaying.
+
+* Running
+
+In the top level directory (where this file is) run:
+
+: flask --app hosewebview run
+
+Which will start the application, add ~--debug~ to enable live reloading of changes.
+
+If you want to run this on start up, you can use the templated ~hosewebview.service~ file, and add the details specific to your setup, then run and enable it with SystemD.
+
+* Testing
 
 To test the application you can run the script ~create-example-db.py~ in the tests directory with:
 : python create-example-db.py
 
-and it will generate a database filled with sample data that should display if you run the application.
+and it will generate a database filled with sample data that should display if you run the application without a configuration file.
+
+* TODO/Bugs
+
+- [X] Fix UTC vs local time consistency.
+- [ ] Add Gas monitor readings
+- [ ] Add ways of seeing other historic weather conditions, e.g. precipitation, sun, wind etc.
+- [ ] Add proper logging of messages and errors.
+
+** Bugs
+
+- [X] History: doesn't show the latest values, as it only shows the archived data, and not the most recent, leaving weird trailing gaps if the temperature has been very steady.
+- [X] In Desktop view, Plotly mouse over shows the series values as being 'timestamp_utc', which is right. - Renamed Pandas Column
+- [ ] History: If the end time is more than a minute old and you click 'update' without changing the time, it'll stop showing the most recent samples, as they'll be cut off by this time.
 
 * Licenses
 

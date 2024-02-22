@@ -80,13 +80,15 @@ def index():
     # make it to a dict and add new entries
     # that we need
     formatted_results = []
+
+    tz = current_app.config["TIME_ZONE"]
     
     for row in summaries:
         new_row = {key: value for key, value in zip(row.keys(), row)}
         
         new_row["localtime"] = render_local_time(row["timestamp_utc"],
                                                  "%H:%M %p",
-                                                 "Europe/Berlin")
+                                                 tz)
         formatted_results.append(new_row)
 
     # Set in global preferences to add automatically

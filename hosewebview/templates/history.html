@@ -15,41 +15,48 @@
     <div id="chart-options">
 	<h2>Chart Options</h2>
 	<div class="input-container">
-	<form class="temp-hist" method="get">
-	    <fieldset>
-		<legend>Dates</legend>
-	    <p><label for="start_time">From:&nbsp;</label>
-	    <input type="datetime-local"
-		   id="start_time"
-		   name="start_time"
-		   min="2022-06-01T00:00"
-		   value="{{start_time}}"/>
-	</p>
-	<p><label for="end_time">To:</label>
-	    <input type="datetime-local"
-		   id="end_time"
-		   name="end_time"
-		   min="2022-06-01T00:00"
-		   value="{{end_time}}"/>
-	</p>
-	    </fieldset>
-	<fieldset>
-	    <legend>Location</legend>
-	    {% for location, checked in location_dict.items() %}
-		<div>
-		<input type="checkbox" id="{{ location }}" name="location" value="{{ location }}" {{ checked }}/>
-		<label for="{{ location }}">{{ location }}</label>
-		</div>
-	    {% endfor %}
-	</fieldset>
-	    <fieldset>
-		<legend>View Type</legend>
-		{% for view in view_type %}
-		  <p><input type="radio" id="{{ view[0] }}" name="mobile" value="{{ view[1] }}" {{ view[2] }}/>
-		      <label for="{{ view[0] }}">{{ view[0].capitalize() }}</label></p>
-		{% endfor %}
-	    </fieldset></div>
-	    <br>
+	    <form class="temp-hist" method="get">
+		<fieldset>
+		    <legend>Date & Times</legend>
+			<p>
+			   <label for="start_time">From:&nbsp;</label>
+			   <input type="datetime-local"
+				  id="start_time"
+				  name="start_time"
+				  min="2022-06-01T00:00"
+				  value="{{start_time}}"/>
+			</p>
+			<p>
+			    <label for="end_time">To:</label>
+			    <input type="datetime-local"
+				   id="end_time"
+				   name="end_time"
+				   min="2022-06-01T00:00"
+				   value="{{end_time}}"/>
+			</p>
+		</fieldset>
+		<input type="hidden" id="timezone" name="timezone" value="{{ timezone }}"/>
+		<fieldset>
+		    <legend>Location</legend>
+		    <p>
+		    {% for location, checked in location_dict.items() %}
+			<div>
+			    <input type="checkbox" id="{{ location }}" name="location" value="{{ location }}" {{ checked }}/>
+			    <label for="{{ location }}">{{ location }}</label>
+			</div>
+		    {% endfor %}
+		    </p>
+		</fieldset>
+		<fieldset>
+		    <legend>View Type</legend>
+		    {% for view in view_type %}
+			<p>
+			    <input type="radio" id="{{ view[0] }}" name="mobile" value="{{ view[1] }}" {{ view[2] }}/>
+			    <label for="{{ view[0] }}">{{ view[0].capitalize() }}</label></p>
+		    {% endfor %}
+		</fieldset>
+	</div>
+	<br>
 	<input type="submit" id="submit-button" class="button" value="Update Chart"/>
 	</form>
     </div>

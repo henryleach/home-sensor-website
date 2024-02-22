@@ -60,9 +60,6 @@ div.summary-container {display: flex;
 
 .loc-summary div:first-child > * {font-size: 1.2em;}
 
-.input-container {display: flex;
-		  flex-direction: row;}
-
 form {margin: 0px;}
 
 .button {padding: 8px;
@@ -87,7 +84,9 @@ nav {background-color: var(--light-high-light-color);
      font-size: 1.5rem;}
 
 form.temp-hist {
-    display: flex;}
+    display: flex;
+    justify-content: center;
+    gap: 1rem;}
 
 fieldset, .button {
     border-radius: 4px;
@@ -100,11 +99,14 @@ input[type="datetime-local"] {font: inherit;}
 fieldset:first-child > p {display: flex;
 			  justify-content: space-between;}
 
-#submit-button {margin: 0.5em 3em 3em;}
+#submit-button {display: block;
+		margin: 0.5em auto 3em;}
 
-@media (max-width:520px) {
+@media (max-width:550px) {
     form.temp-hist {
 	flex-direction: column;
+	width: fit-content;
+	margin-inline: auto;
     }
 }
 
